@@ -4,9 +4,10 @@ import java.util.HashMap;
  * File created by duane
  * 2015-05-21 | 11:44 AM
  */
+
 public class Session implements ISession {
 
-    HashMap<String, Object> content;
+    HashMap<String, String> content;
 
     public String id = "";
     public int received = 0;
@@ -16,16 +17,16 @@ public class Session implements ISession {
         id = i;
         received = r;
         timeout = t;
-        content = new HashMap<String, Object>();
+        content = new HashMap<String, String>();
     }
 
     @Override
-    public void setAttribute(String key, Object content) {
-        //content.add(key, content);
+    public void setAttribute(String key, String obj) {
+        content.put(key, obj);
     }
 
     @Override
-    public Object getAttribute(String key) {
+    public String getAttribute(String key) {
         if (content.containsKey(key)) {
             return content.get(key);
         }

@@ -3,18 +3,19 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.Timestamp;
 import java.util.HashMap;
 
 /**
  * File created by duane
  * 2015-05-21 | 11:12 AM
  */
+
 public class SessionServer {
 
     public static final int PORT = 8989;
 
     public static final HashMap<String, Session> sessions = new HashMap<String, Session>();
+    private static int counter;
 
     public static void main(String [] args) throws Exception {
         int port = PORT;
@@ -56,7 +57,8 @@ public class SessionServer {
 
                         if (opcode.equals("SNEW")) {
                             timeout = sline[1];
-                            id = String.valueOf(sessions.size());
+                            id = String.valueOf(counter);
+                            counter++;
                             long ltimestamp = System.currentTimeMillis() / 1000;
                             String timestamp = String.valueOf(ltimestamp);
                             timeout = sline[1];
@@ -65,7 +67,7 @@ public class SessionServer {
                         } else if (opcode.equals("SSET")) {
                             id = sline[1];
                             key = sline[2];
-                            Object object = null;
+                            String object = sline[3];
                             System.out.println("    Setting attribute " + key + " for session " + id);
                             if (sessions.containsKey(id)) {
                                 sessions.get(id).setAttribute(key, object);
