@@ -1,12 +1,10 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.Timestamp;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * File created by duane
@@ -16,7 +14,7 @@ public class SessionServer {
 
     public static final int PORT = 8989;
 
-    public static final HashMap<String, HashMap<String, Object>> sessionContent = new HashMap<String, HashMap<String, Object>>();
+    public static final HashMap<String, Session> sessions = new HashMap<String, Session>();
 
     public static void main(String [] args) throws Exception {
         int port = PORT;
@@ -58,23 +56,52 @@ public class SessionServer {
 
                         if (opcode.equals("SNEW")) {
                             timeout = sline[1];
-                            System.out.println("    Creating new session with id=" + "xxxx" + "and timeout=" + timeout);
+                            id = String.valueOf(sessions.size());
+                            long ltimestamp = System.currentTimeMillis() / 1000;
+                            String timestamp = String.valueOf(ltimestamp);
+                            timeout = sline[1];
+                            System.out.println("    Creating new session with id=" + id + " at " + timestamp + " with timeout=" + timeout);
+                            sessions.put(id, new Session(id, Integer.valueOf(timestamp), Integer.valueOf(timeout)));
                         } else if (opcode.equals("SSET")) {
                             id = sline[1];
                             key = sline[2];
+                            Object object = null;
                             System.out.println("    Setting attribute " + key + " for session " + id);
+                            if (sessions.containsKey(id)) {
+                                sessions.get(id).setAttribute(key, object);
+                            } else {
+                                System.err.println("    No session with id " + id);
+                            }
                         } else if (opcode.equals("SGET")) {
                             id = sline[1];
                             key = sline[2];
+                            Object object = null;
                             System.out.println("    Getting attribute " + key + " for session " + id);
+                            if (sessions.containsKey(id)) {
+                                if ((object = sessions.get(id).getAttribute(key)) != null) {
+
+                                } else {
+                                    System.err.println("    Session " + id + " doesn't contain any object at " + key);
+                                }
+                            } else {
+                                System.err.println("    No session with id " + id);
+                            }
                         } else if (opcode.equals("SKILL")) {
                             id = sline[1];
                             System.out.println("    Killing session " + id);
+                            if (sessions.containsKey(id)) {
+                                sessions.remove(id);
+                            } else {
+                                System.err.println("    No session with id " + id);
+                            }
+                        } else {
+                            System.err.println("    Invalid command: " + line);
                         }
                     }
                 } catch (Exception e) {
                     System.err.println(e);
                 }
+                s.close();
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
