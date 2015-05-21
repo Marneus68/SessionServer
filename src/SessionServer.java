@@ -63,7 +63,7 @@ public class SessionServer {
                             long ltimestamp = System.currentTimeMillis() / 1000;
                             String timestamp = String.valueOf(ltimestamp);
                             timeout = sline[1];
-                            System.out.println("    Creating new session with id=" + id + " at " + timestamp + " with timeout=" + timeout);
+                            System.out.println("    Creating new session with id=" + id + " at " + timestamp + " with timeout=" + timeout + "s");
                             sessions.put(id, new Session(id, Integer.valueOf(timestamp), Integer.valueOf(timeout)));
 
                             /* sending out a reply containing ONLY the session ID */
@@ -74,7 +74,7 @@ public class SessionServer {
                             id = sline[1];
                             key = sline[2];
                             String object = sline[3];
-                            System.out.println("    Setting attribute " + key + " for session " + id);
+                            System.out.println("    Setting attribute \"" + key + "\" for session " + id);
                             if (sessions.containsKey(id)) {
                                 sessions.get(id).setAttribute(key, object);
                             } else {
@@ -84,7 +84,7 @@ public class SessionServer {
                             id = sline[1];
                             key = sline[2];
                             String object;
-                            System.out.println("    Getting attribute " + key + " for session " + id);
+                            System.out.println("    Getting attribute \"" + key + "\" for session " + id);
                             if (sessions.containsKey(id)) {
                                 if ((object = sessions.get(id).getAttribute(key)) != null) {
                                     os.write(object.getBytes());
