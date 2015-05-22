@@ -47,9 +47,9 @@ public class SessionServer {
                     PrintWriter out = new PrintWriter(s.getOutputStream(), true);
                     OutputStream os = s.getOutputStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                    String line = null;
-
+                    String line = "";
                     while ((line = in.readLine()) != null && !line.isEmpty()) {
+                        System.out.println("session stream2"+ line);
                         String [] sline = line.split(":");
                         String  opcode = sline[0],
                                 id = "",
@@ -107,10 +107,14 @@ public class SessionServer {
                             System.err.println("    Invalid command: " + line);
                         }
                     }
+
                 } catch (Exception e) {
                     System.err.println(e);
                 }
-                s.close();
+                finally {
+                    s.close();
+                }
+
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
